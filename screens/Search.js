@@ -5,7 +5,7 @@ import SwitchSelector from 'react-native-switch-selector';
 import WebView from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
 import * as parameters from '../utils/parameters'
-import { Article, ArticleTitle, ArticleImage, ArticleDescription, ArticleButton, ArticleButtonText } from '../utils/components';
+import { EntireArticle, ArticleTitle, ArticleImage, ArticleDescription, ArticleButton, ArticleButtonText } from '../utils/components';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -100,14 +100,14 @@ const Search = () => {
         // fixed
         // spacing={20}
         renderItem={({ item, index }) => (
-          <Article>
+          <EntireArticle>
             <ArticleTitle>{item.title}</ArticleTitle>
             <ArticleImage source={{uri: item.urlToImage}} />
             <ArticleDescription>{item.description}</ArticleDescription>
             <ArticleButton onPress={() => navigation.navigate('OneNews', {selectedCountry: selectedCountry, openedNews: item})}>
               <ArticleButtonText>{'More >>'}</ArticleButtonText>
             </ArticleButton>
-          </Article>
+          </EntireArticle>
         )}
       />
     </View>

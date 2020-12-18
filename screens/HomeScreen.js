@@ -4,7 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { FlatGrid } from 'react-native-super-grid';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
-import { Article, ArticleTitle, ArticleImage, ArticleDescription, ArticleButton, ArticleButtonText } from '../utils/components';
+import { EntireArticle, ArticleTitle, ArticleImage, ArticleDescription, ArticleButton, ArticleButtonText } from '../utils/components';
 import I18n from '../i18n'
 import * as parameters from '../utils/parameters'
 
@@ -14,7 +14,7 @@ const screenWidth = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(screenWidth * 0.7);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4);
 
-function Home (){
+function HomeScreen (){
   const [country, setCountry] = useState('gb');
   const [items, setItems] = useState([]);
   const navigation = useNavigation();
@@ -77,14 +77,14 @@ function Home (){
           itemDimension={screenWidth * 0.33}
           data={items}
           renderItem={({ item }) => (
-            <Article>
+            <EntireArticle>
               <ArticleTitle>{item.title}</ArticleTitle>
               <ArticleImage source={{uri: item.urlToImage}} />
               <ArticleDescription>{item.description}</ArticleDescription>
               <ArticleButton onPress={() => navigation.navigate('OneNews', {selectedCountry: country, openedNews: item})}>
                 <ArticleButtonText>{'More >>'}</ArticleButtonText>
               </ArticleButton>
-            </Article>
+            </EntireArticle>
           )}
         />
       </View>
@@ -131,4 +131,4 @@ function Home (){
     },
   });
 
-  export default Home;
+  export default HomeScreen;

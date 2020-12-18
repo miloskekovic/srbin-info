@@ -53,7 +53,7 @@ export const ArticleButtonText = styled.Text`
   font-size: ${fontRem * 2.5}px;
   `
 
-export const Article = styled.View.attrs(props => ({
+export const EntireArticle = styled.View.attrs(props => ({
     height: props.height || viewRem,
 }))`
   background-color: ${color3};
@@ -116,7 +116,7 @@ export const OpenedArticleButtonText = styled.Text`
   margin-bottom: auto;
   `
 
-export const OpenedArticle = styled.View`
+export const OpenedEntireArticle = styled.View`
     height: 100%;
     margin-horizontal: 1%
 `

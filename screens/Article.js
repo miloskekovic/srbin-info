@@ -12,7 +12,7 @@ const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4);
 
 
 
-function OneNews({ navigation, route }) {
+function Article({ navigation, route }) {
     const dateToStr = (date) => {
         var d = new Date(date);
         return d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear() + " " +
@@ -72,4 +72,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OneNews;
+export default Article;
