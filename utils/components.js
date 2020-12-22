@@ -13,7 +13,7 @@ const viewRem = screenHeight / 3;
 
 export const View = styled.View`
   flex: 1;
-  margin: ${screenWidth} * 0.05;
+  margin: ${screenWidth * 0.05}px;
 `;
 
 export const LoadingView = styled.View`
@@ -21,11 +21,6 @@ export const LoadingView = styled.View`
   align-items: 'center';
   justify-content: 'center';
   background-color: '#ecf0f1';
-`;
-
-export const FlatGrid = styled.FlatGrid`
-  margin-top: 10;
-  flex: 1;
 `;
 
 export const ArticleTitle = styled.Text`
@@ -57,7 +52,7 @@ export const ArticleButton = styled.TouchableOpacity`
   margin-left: auto;
   margin-right: auto;
   height: ${viewRem * 0.1}px;
-  backgroundcolor: ${color4};
+  background-color: ${color4};
   color: red;
 `;
 
@@ -75,12 +70,12 @@ export const CategoryButton = styled.TouchableOpacity`
   margin-left: auto;
   margin-right: auto;
   height: ${viewRem * 0.1}px;
-  backgroundcolor: ${color4};
+  background-color: ${color4};
   color: red;
 `;
 
 export const CategoryButtonText = styled.Text`
-  font-size: 16;
+  font-size: 16px;
   text-decoration-line: 'underline';
 `;
 
@@ -134,7 +129,7 @@ export const OpenedArticleButton = styled.TouchableOpacity`
   margin-right: auto;
   margin-top: 3%;
   height: 5%;
-  backgroundcolor: ${color3};
+  background-color: ${color3};
 `;
 
 export const OpenedArticleButtonText = styled.Text`

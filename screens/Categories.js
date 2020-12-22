@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Image, Dimensions, ScrollView, Alert } from 'react-native';
+import { Text, Image, Dimensions, ScrollView, Alert } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { useNavigation } from '@react-navigation/native';
 import * as parameters from '../utils/parameters';
 import {
+  View,
   EntireArticle,
   ArticleTitle,
   ArticleImage,
@@ -21,7 +22,7 @@ const screenWidth = Dimensions.get('window').width;
 function showError(error) {
   Alert.alert(
     'Alert Title',
-    error,
+    `${error}`,
     [
       {
         text: 'Cancel',
@@ -89,7 +90,7 @@ const Categories = () => {
   function renderItemFunction({ item }) {
     // console.log(newsByCountries[selectedCountry]['entertainment'])
     return (
-      <View style={{ backgroundColor: '#547980' }}>
+      <View>
         <EntireArticle>
           <ArticleTitle>{item.title}</ArticleTitle>
           <ArticleImage source={{ uri: item.urlToImage }} />

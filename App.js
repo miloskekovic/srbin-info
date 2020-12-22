@@ -12,6 +12,7 @@ import Categories from './screens/Categories';
 import Search from './screens/Search';
 import Settings from './screens/Settings';
 import DrawerContent from './screens/DrawerContent';
+import * as parameters from './utils/parameters';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,8 +39,8 @@ function BottomTab() {
         component={TabHome}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: (color, size) => (
-            <MaterialCommunityIcons name="newspaper" color={color} size={size} />
+          tabBarIcon: () => (
+            <MaterialCommunityIcons name="newspaper" size={20} color={parameters.color1} />
           ),
         }}
       />
@@ -48,7 +49,7 @@ function BottomTab() {
         component={Categories}
         options={{
           tabBarLabel: 'Categories',
-          tabBarIcon: (color, size) => <MaterialIcons name="category" color={color} size={size} />,
+          tabBarIcon: () => <MaterialIcons name="category" color={parameters.color1} size={20} />,
         }}
       />
       <Tab.Screen
@@ -56,7 +57,7 @@ function BottomTab() {
         component={Search}
         options={{
           tabBarLabel: 'Search',
-          tabBarIcon: (color, size) => <MaterialIcons name="search" color={color} size={size} />,
+          tabBarIcon: () => <MaterialIcons name="search" color={parameters.color1} size={20} />,
         }}
       />
     </Tab.Navigator>

@@ -20,7 +20,7 @@ const { apiKey } = parameters;
 function showError(error) {
   Alert.alert(
     'Alert Title',
-    error,
+    `${error}`,
     [
       {
         text: 'Cancel',
@@ -118,6 +118,7 @@ const Search = () => {
       />
       <FlatGrid
         itemDimension={screenWidth * 0.33}
+        style={{ marginTop: 10, flex: 1 }}
         data={newsByCountryAndCriteria}
         renderItem={({ item }) => (
           <EntireArticle>
