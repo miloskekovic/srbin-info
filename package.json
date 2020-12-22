@@ -1,5 +1,5 @@
 {
-  "name": "srbinInfo",
+  "name": "srbin_info",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -7,7 +7,16 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "format": "prettier-eslint --eslint-config-path ./.eslintrc.js --write '**/*.js'",
+    "lint": "eslint . --ext .js",
+    "precommit": "lint-staged",
+    "prettier": "prettier ."
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
@@ -15,6 +24,9 @@
     "@react-navigation/drawer": "^5.11.4",
     "@react-navigation/native": "^5.8.10",
     "@react-navigation/stack": "^5.12.8",
+    "prettier-eslint": "^12.0.0",
+    "prettier-eslint-cli": "^5.0.0",
+    "prop-types": "^15.7.2",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-dropdown-picker": "^3.7.1",
@@ -35,10 +47,22 @@
     "@babel/core": "7.12.10",
     "@babel/runtime": "7.12.5",
     "@react-native-community/eslint-config": "1.1.0",
+    "babel-eslint": "^10.1.0",
     "babel-jest": "25.5.1",
-    "eslint": "6.8.0",
+    "eslint": "^7.16.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^0.14.3",
     "jest": "25.5.4",
+    "lint-staged": "^10.5.3",
     "metro-react-native-babel-preset": "0.59.0",
+    "prettier": "^2.2.1",
     "react-test-renderer": "16.13.1"
   },
   "jest": {
