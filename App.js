@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 /* eslint-disable react/jsx-props-no-spreading */
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -11,23 +11,30 @@ import Article from './screens/Article';
 import Categories from './screens/Categories';
 import Search from './screens/Search';
 import Settings from './screens/Settings';
+import Contact from './screens/Contact';
 import DrawerContent from './screens/DrawerContent';
 import * as parameters from './utils/parameters';
+import I18n from './i18n';
+import { SettingsContext, SettingsProvider } from './SettingsContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function TabHome() {
+  const [language] = useContext(SettingsContext);
+  I18n.locale = language;
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name={I18n.t('home_page')} component={HomeScreen} />
       <Stack.Screen name="Article" component={Article} />
     </Stack.Navigator>
   );
 }
 
 function BottomTab() {
+  const [language] = useContext(SettingsContext);
+  I18n.locale = language;
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -38,9 +45,9 @@ function BottomTab() {
         name="Tab Home"
         component={TabHome}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: I18n.t('home_page'),
           tabBarIcon: () => (
-            <MaterialCommunityIcons name="newspaper" size={20} color={parameters.color1} />
+            <MaterialCommunityIcons name="newspaper" size={20} color={parameters.color4} />
           ),
         }}
       />
@@ -48,7 +55,7 @@ function BottomTab() {
         name="Categories"
         component={Categories}
         options={{
-          tabBarLabel: 'Categories',
+          tabBarLabel: I18n.t('categories'),
           tabBarIcon: () => <MaterialIcons name="category" color={parameters.color1} size={20} />,
         }}
       />
@@ -66,11 +73,14 @@ function BottomTab() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
-        <Drawer.Screen name="HomeScreen" component={BottomTab} />
-        <Drawer.Screen name="Settings" component={Settings} />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <SettingsProvider>
+      <NavigationContainer>
+        <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
+          <Drawer.Screen name="HomeScreen" component={BottomTab} />
+          <Drawer.Screen name="Settings" component={Settings} />
+          <Drawer.Screen name="Contact" component={Contact} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </SettingsProvider>
   );
 }

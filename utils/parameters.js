@@ -5,10 +5,23 @@ export const screenWidth = Dimensions.get('window').width;
 
 export const mainPartOfURL = 'https://srbin.info/';
 export const apiKey = 'fc436c186efa4228a7d7a6e3a4dc4072';
-export const color1 = '#594F4F';
-export const color2 = '#547980';
-export const color3 = '#45ADA8';
-export const color4 = '#9DE0AD';
+export const color1 = '#59426D';
+export const color2 = '#5A538A';
+export const color3 = '#4977AD';
+export const color4 = '#4C99CF';
+export const color5 = '#40C8C4';
+
+function fontRem() {
+  if (screenWidth > 400) {
+    return 16;
+  }
+  if (screenWidth > 250) {
+    return 12;
+  }
+  return 10;
+}
+
+export const fontSize = fontRem();
 
 export const categories = {
   pocetna: {
@@ -50,22 +63,12 @@ export const categories = {
   },
 };
 
-export function fontSizer() {
-  if (screenWidth > 400) {
-    return 18;
-  }
-  if (screenWidth > 250) {
-    return 14;
-  }
-  return 12;
-}
-
 export function articleHeight() {
   if (screenWidth > 400) {
     return 18;
   }
   if (screenWidth > 250) {
-    return 14;
+    return 16;
   }
-  return 12;
+  return 14;
 }

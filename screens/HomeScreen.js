@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Dimensions, Alert } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { FlatGrid } from 'react-native-super-grid';
-import { useNavigation } from '@react-navigation/native';
 import { Html5Entities } from 'html-entities';
 import {
   EntireArticle,
@@ -13,18 +13,19 @@ import {
   ArticleButtonText,
 } from '../utils/components';
 import I18n from '../i18n';
+import { SettingsContext } from '../SettingsContext';
 import * as parameters from '../utils/parameters';
 
 const { mainPartOfURL } = parameters;
 const screenWidth = Dimensions.get('window').width;
 
-function HomeScreen() {
+function HomeScreen({ navigation }) {
   const [news, setNews] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('udarnaVest');
-  const navigation = useNavigation();
-  I18n.locale = 'de_de';
+  const [language] = useContext(SettingsContext);
+  I18n.locale = language;
   const categories = [
-    { label: I18n.t('breaking_news'), value: 'udarnaVest', hidden: true },
+    { label: I18n.t('breaking_news'), value: 'udarnaVest' },
     { label: I18n.t('daily_news'), value: 'vestiDana' },
     { label: I18n.t('actual'), value: 'aktuelno' },
     { label: I18n.t('video'), value: 'video' },
@@ -65,10 +66,13 @@ function HomeScreen() {
       article.indexOf(datePattern) + datePattern.length,
       article.indexOf('</time>'),
     );
-    const content = article.slice(
-      article.indexOf(contentPattern) + contentPattern.length,
-      article.indexOf('</p>'),
-    );
+    const content =
+      article.indexOf(contentPattern) === -1
+        ? ''
+        : article.slice(
+            article.indexOf(contentPattern) + contentPattern.length,
+            article.indexOf('</p>'),
+          );
     const image = article.slice(
       article.indexOf(imagePattern) + imagePattern.length,
       article.indexOf(');'),
@@ -78,13 +82,13 @@ function HomeScreen() {
       article.indexOf('" '),
     );
 
-    newArticle.title = title;
+    newArticle.title = entities.decode(title);
     const newDate = date.replace(/&nbsp;/g, ' ');
     newArticle.date = newDate;
-    newArticle.content = entities.decode(content);
+    newArticle.content = entities.decode(content).substring(0, 200).concat('...');
     newArticle.image = image;
     newArticle.url = url;
-    return newArticle;
+    return content === '' ? null : newArticle;
   }
 
   const fetchDataFromURL = () => {
@@ -114,21 +118,12 @@ function HomeScreen() {
               textRows[i] !== '<div class="paginatebottom">'
             );
             i -= 1;
-            result.push(extractPartsOfArticle(article));
+            const newArticle = extractPartsOfArticle(article);
+            if (newArticle !== null) {
+              result.push(newArticle);
+            }
           }
         }
-        return result;
-      })
-      .then((articles) => {
-        articles.forEach((article) => {
-          console.log('title:', article.title);
-          console.log('date:', article.date == null ? '' : article.date);
-          console.log('content:', article.content == null ? '' : article.content);
-          console.log('image:', article.image);
-          console.log('url:', article.url);
-        });
-      })
-      .then(() => {
         setNews(result);
       })
       .catch((error) => {
@@ -139,14 +134,19 @@ function HomeScreen() {
     fetchDataFromURL();
   }, [selectedCategory]);
   return (
-    <View style={{ flex: 1, marginVertical: parameters.screenWidth * 0.03 }}>
+    <View style={{ flex: 1 }}>
       <DropDownPicker
         items={categories}
         defaultValue={categories[0].value}
-        containerStyle={{ height: 40 }}
+        containerStyle={{ height: parameters.screenHeight / 10 }}
         style={{
           backgroundColor: 'silver',
           borderColor: 'black',
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+          marginVertical: parameters.screenWidth * 0.03,
           marginHorizontal: parameters.screenWidth * 0.03,
         }}
         itemStyle={{
@@ -155,13 +155,17 @@ function HomeScreen() {
         dropDownStyle={{
           backgroundColor: '#fafafa',
           width: parameters.screenWidth * 0.94,
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          borderBottomLeftRadius: 30,
+          borderBottomRightRadius: 30,
           alignSelf: 'center',
         }}
         onChangeItem={(item) => setSelectedCategory(item.value)}
       />
       <FlatGrid
         itemDimension={screenWidth * 0.33}
-        style={{ marginTop: 10, flex: 1 }}
+        style={{ flex: 1 }}
         data={news}
         renderItem={({ item }) => (
           <EntireArticle>
@@ -170,8 +174,8 @@ function HomeScreen() {
             <ArticleDescription>{item.content}</ArticleDescription>
             <ArticleButton
               onPress={() =>
-                navigation.navigate('OneNews', {
-                  openedNews: item,
+                navigation.navigate('Article', {
+                  article: item,
                 })
               }>
               <ArticleButtonText>{'More >>'}</ArticleButtonText>

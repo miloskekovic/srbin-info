@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { Text, Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import I18n from '../i18n';
 import * as dimensions from '../utils/parameters';
 import { View } from '../utils/components';
+import { SettingsContext } from '../SettingsContext';
 
 const serbiaLogo = require('../icons/flags/serbia.png');
 const unitedStatesLogo = require('../icons/flags/united_states.png');
@@ -12,13 +13,13 @@ const frenchLogo = require('../icons/flags/french.png');
 const italianLogo = require('../icons/flags/italian.png');
 
 const Settings = () => {
-  const [language, setLanguage] = useState('de_de');
+  const [language, setLanguage] = useContext(SettingsContext);
   I18n.locale = language;
 
   const languages = [
     {
       label: I18n.t('serbian_cyrillic'),
-      value: 'sr_Cyrl_RS',
+      value: 'srCyrlRS',
       icon: () => (
         <Image
           source={serbiaLogo}
@@ -34,7 +35,7 @@ const Settings = () => {
     },
     {
       label: I18n.t('serbian_latin'),
-      value: 'sr_Latn_RS',
+      value: 'srLatnRS',
       icon: () => (
         <Image
           source={serbiaLogo}
@@ -49,7 +50,7 @@ const Settings = () => {
     },
     {
       label: I18n.t('english'),
-      value: 'en_us',
+      value: 'en',
       icon: () => (
         <Image
           source={unitedStatesLogo}
@@ -64,7 +65,7 @@ const Settings = () => {
     },
     {
       label: I18n.t('german'),
-      value: 'de_de',
+      value: 'de',
       icon: () => (
         <Image
           source={germanyLogo}
@@ -79,7 +80,7 @@ const Settings = () => {
     },
     {
       label: I18n.t('french'),
-      value: 'fr_fr',
+      value: 'fr',
       icon: () => (
         <Image
           source={frenchLogo}
@@ -94,7 +95,7 @@ const Settings = () => {
     },
     {
       label: I18n.t('italian'),
-      value: 'it_it',
+      value: 'it',
       icon: () => (
         <Image
           source={italianLogo}

@@ -1,10 +1,15 @@
 export default {
-  home_page: 'Pagina iniziale',
-  language_selection: 'Selezione della lingua',
   serbian_cyrillic: 'Serbo - cirillico',
   serbian_latin: 'Serbo - latino',
   english: 'Inglese',
   german: 'Tedesco',
   french: 'Francese',
   italian: 'Italiano',
+  home_page: 'Pagina iniziale',
+  settings: 'Impostazioni',
+  language_selection: 'Selezione della lingua',
+  breaking_news: 'Ultime notizie',
+  daily_news: 'Le notizie del giorno',
+  actual: 'Notizie reali',
+  video: 'Video',
 };

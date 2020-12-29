@@ -1,5 +1,4 @@
 export default {
-  home_page: 'Startseite',
   language_selection: 'Sprachauswahl',
   serbian_cyrillic: 'Serbisches kyrillisch',
   serbian_latin: 'Serbisches Latein',
@@ -7,6 +6,9 @@ export default {
   german: 'Deutsch',
   french: 'Französisch',
   italian: 'Italienisch',
+  home_page: 'Startseite',
+  categories: 'Kategorien',
+  settings: 'Einstellungen',
   breaking_news: 'Aktuelle Nachrichten',
   daily_news: 'Tägliche Nachrichten',
   actual: 'Aktuell',
