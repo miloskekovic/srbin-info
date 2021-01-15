@@ -11,17 +11,32 @@ export const color3 = '#4977AD';
 export const color4 = '#4C99CF';
 export const color5 = '#40C8C4';
 
-function fontRem() {
+function viewRem() {
   if (screenWidth > 400) {
-    return 16;
+    return screenHeight * 0.5;
   }
   if (screenWidth > 250) {
-    return 12;
+    return screenHeight * 0.6;
+  }
+  return screenHeight * 0.6;
+}
+
+export const articleHeight = viewRem();
+
+function fontRem() {
+  if (screenWidth > 400) {
+    return 18;
+  }
+  if (screenWidth > 250) {
+    return 14;
   }
   return 10;
 }
 
 export const fontSize = fontRem();
+export const fontSmall = fontSize * 0.75;
+export const fontMedium = fontSize;
+export const fontLarge = fontSize * 1.25;
 
 export const categories = {
   pocetna: {
@@ -62,13 +77,3 @@ export const categories = {
     svetskaIstorija: 'mainPartOfURL'.concat('category/istorija/svetska-istorija/'),
   },
 };
-
-export function articleHeight() {
-  if (screenWidth > 400) {
-    return 18;
-  }
-  if (screenWidth > 250) {
-    return 16;
-  }
-  return 14;
-}

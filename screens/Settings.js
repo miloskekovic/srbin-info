@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Text, Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import I18n from '../i18n';
-import * as dimensions from '../utils/parameters';
+import * as parameters from '../utils/parameters';
 import { View } from '../utils/components';
 import { SettingsContext } from '../SettingsContext';
 
@@ -115,7 +115,7 @@ const Settings = () => {
       <Text
         style={{
           fontWeight: 'bold',
-          marginBottom: dimensions.screenWidth * 0.01,
+          marginBottom: parameters.screenWidth * 0.01,
         }}>
         {I18n.t('language_selection')}
       </Text>
@@ -126,6 +126,7 @@ const Settings = () => {
         itemStyle={{
           justifyContent: 'flex-start',
         }}
+        dropDownMaxHeight={parameters.screenHeight * 0.5}
         dropDownStyle={{ backgroundColor: '#fafafa' }}
         onChangeItem={(item) => {
           setLanguage(item.value);

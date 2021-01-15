@@ -26,7 +26,20 @@ function TabHome() {
   I18n.locale = language;
   return (
     <Stack.Navigator>
-      <Stack.Screen name={I18n.t('home_page')} component={HomeScreen} />
+      <Stack.Screen
+        name={I18n.t('home_page')}
+        component={HomeScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: parameters.color3,
+          },
+          headerTitleStyle: {
+            fontSize: parameters.fontLarge,
+            color: 'white',
+            alignSelf: 'center',
+          },
+        }}
+      />
       <Stack.Screen name="Article" component={Article} />
     </Stack.Navigator>
   );

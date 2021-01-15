@@ -81,7 +81,7 @@ const Categories = () => {
         allArticles[category][subcategory].push(fetchFunction(subcategoryUrl));
       });
     });
-    Promise.all(allArticles).then((results) => {
+    await Promise.all(allArticles).then((results) => {
       setNewsByCategories(results);
       setLoading(false);
     });

@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Dimensions, Alert } from 'react-native';
+import { Dimensions, Alert } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { FlatGrid } from 'react-native-super-grid';
 import { Html5Entities } from 'html-entities';
 import {
+  View,
   EntireArticle,
   ArticleTitle,
   ArticleImage,
@@ -83,9 +84,10 @@ function HomeScreen({ navigation }) {
     );
 
     newArticle.title = entities.decode(title);
-    const newDate = date.replace(/&nbsp;/g, ' ');
+    const partOfData = date.replace(/&nbsp;/g, ' ').split('  ');
+    const newDate = partOfData[1].concat(' ').concat(partOfData[0]);
     newArticle.date = newDate;
-    newArticle.content = entities.decode(content).substring(0, 200).concat('...');
+    newArticle.content = entities.decode(content).substring(0, 250).concat('...');
     newArticle.image = image;
     newArticle.url = url;
     return content === '' ? null : newArticle;
@@ -134,11 +136,21 @@ function HomeScreen({ navigation }) {
     fetchDataFromURL();
   }, [selectedCategory]);
   return (
-    <View style={{ flex: 1 }}>
+    <View>
       <DropDownPicker
         items={categories}
         defaultValue={categories[0].value}
-        containerStyle={{ height: parameters.screenHeight / 10 }}
+        containerStyle={{
+          width: parameters.screenWidth * 0.97,
+          height: parameters.screenHeight * 0.06,
+          alignSelf: 'center',
+          marginTop: parameters.screenHeight * 0.02,
+          marginBottom: parameters.screenHeight * 0.01,
+        }}
+        dropDownMaxHeight={parameters.screenHeight * 0.5}
+        labelStyle={{
+          fontSize: parameters.fontMedium,
+        }}
         style={{
           backgroundColor: 'silver',
           borderColor: 'black',
@@ -146,25 +158,24 @@ function HomeScreen({ navigation }) {
           borderTopRightRadius: 0,
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
-          marginVertical: parameters.screenWidth * 0.03,
-          marginHorizontal: parameters.screenWidth * 0.03,
         }}
         itemStyle={{
           justifyContent: 'flex-start',
         }}
         dropDownStyle={{
           backgroundColor: '#fafafa',
-          width: parameters.screenWidth * 0.94,
+          width: parameters.screenWidth * 0.975,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
-          borderBottomLeftRadius: 30,
-          borderBottomRightRadius: 30,
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
           alignSelf: 'center',
+          marginTop: parameters.screenHeight * 0.001,
         }}
         onChangeItem={(item) => setSelectedCategory(item.value)}
       />
       <FlatGrid
-        itemDimension={screenWidth * 0.33}
+        itemDimension={screenWidth * 0.4}
         style={{ flex: 1 }}
         data={news}
         renderItem={({ item }) => (

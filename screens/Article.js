@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import { Image, Dimensions, ScrollView, Alert } from 'react-native';
+import { Image, Dimensions, ScrollView } from 'react-native';
 import { Html5Entities } from 'html-entities';
 import {
   OpenedEntireArticle,
@@ -13,30 +13,17 @@ import {
 } from '../utils/components';
 
 const screenWidth = Dimensions.get('window').width;
-const partOfArticles = [];
 
-function showError(error) {
-  Alert.alert(
-    'Alert Title',
-    `${error}`,
-    [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      { text: 'OK', onPress: () => {} },
-    ],
-    { cancelable: true },
-  );
-}
-
-function extractPartsOfArticle(article) {
+async function extractPartsOfArticle(article) {
   const entities = new Html5Entities();
 
-  const subtitlePattern = '<h3 class="subtitle">';
+  const subtitlePatternStart = '<h3 class="subtitle">';
+  const subtitlePatternEnd = '</h3>';
   // const datePattern = '<time class="entry-date updated srbin-module-date">';
-  const contentPattern = '<p>';
-  const imagePattern = 'data-src="';
+  const contentPatternStart = '<p>';
+  const contentPatternEnd = '</p>';
+  const imagePatternStart = 'data-src="';
+  const imagePatternEnd = '"';
 
   /* const date = article.slice(
     article.indexOf(datePattern) + datePattern.length,
@@ -45,57 +32,86 @@ function extractPartsOfArticle(article) {
   let subtitle;
   let content;
   let image;
+  const result = [];
   for (let i = 0; i < article.length; i += 1) {
-    if (article[i].includes(subtitlePattern)) {
-      const part = article.slice(
-        article.indexOf(subtitlePattern) + subtitlePattern.length,
-        article.length,
+    let row = article[i];
+    if (row.includes(subtitlePatternStart)) {
+      let wholeSubtitleText = '';
+      do {
+        row = article[i];
+        wholeSubtitleText = wholeSubtitleText.concat(row);
+        i += 1;
+      } while (!row.includes(subtitlePatternEnd));
+      subtitle = wholeSubtitleText.slice(
+        wholeSubtitleText.indexOf(subtitlePatternStart) + subtitlePatternStart.length,
+        wholeSubtitleText.indexOf(subtitlePatternEnd),
       );
-      subtitle = part.slice(0, part.indexOf('</h3>'));
-      partOfArticles.push('subtitle', entities.decode(subtitle));
-    } else if (article[i].includes(contentPattern)) {
-      content = article.slice(
-        article.indexOf(contentPattern) + contentPattern.length,
-        article.indexOf('</p>'),
+      const obj = {};
+      obj['subtitle'.concat(i)] = entities.decode(subtitle);
+      result.push(obj);
+      i -= 1;
+    } else if (row.includes(imagePatternStart)) {
+      let wholeImageText = '';
+      do {
+        row = article[i];
+        wholeImageText = wholeImageText.concat(row);
+        i += 1;
+      } while (!row.includes(imagePatternEnd));
+      const firstPartOfImage = wholeImageText.slice(
+        wholeImageText.indexOf(imagePatternStart) + imagePatternStart.length,
+        wholeImageText.length,
       );
-      partOfArticles.push('content', entities.decode(content));
-    } else if (article[i].includes(imagePattern)) {
-      image = article.slice(
-        article.indexOf(imagePattern) + imagePattern.length,
-        article.indexOf('"'),
+      image = firstPartOfImage.slice(0, firstPartOfImage.indexOf(imagePatternEnd));
+      const obj = {};
+      obj['image'.concat(i)] = image;
+      result.push(obj);
+      i -= 1;
+    } else if (row.includes(contentPatternStart)) {
+      let wholeContentText = '';
+      do {
+        row = article[i];
+        wholeContentText = wholeContentText.concat(row);
+        i += 1;
+      } while (!row.includes(contentPatternEnd));
+      content = wholeContentText.slice(
+        wholeContentText.indexOf(contentPatternStart) + contentPatternStart.length,
+        wholeContentText.indexOf(contentPatternEnd),
       );
-      partOfArticles.push('image', image);
+      const obj = {};
+      obj['content'.concat(i)] = entities.decode(content);
+      result.push(obj);
+      i -= 1;
     }
   }
+  return result;
 }
 
 const Article = ({ route, navigation }) => {
   const { article } = route.params;
   const [loading, setLoading] = useState(true);
+  const [partOfArticles, setPartOfArticles] = useState([]);
 
-  const fetchArticle = () => {
-    fetch(article.url, {
+  async function fetchArticle() {
+    const wholeArticle = await fetch(article.url, {
       method: 'GET',
-    })
-      .then((response) => response.text())
-      .then((responseJson) => {
-        const textRows = responseJson
-          .substring(
-            responseJson.indexOf('<h3 class="subtitle">'),
-            responseJson.indexOf('class="donacija"'),
-          )
-          .split('\n');
-        extractPartsOfArticle(textRows);
-      })
-      .then(setLoading(false))
-      .catch((error) => {
-        showError(error);
-      });
-  };
+    });
+    const text = await wholeArticle.text();
+    const textRows = text
+      .substring(text.indexOf('<h3 class="subtitle">'), text.indexOf('class="donacija"'))
+      .split('\n');
+    const data = await extractPartsOfArticle(textRows);
+    Promise.all(data).then((values) => {
+      /* for (let i = 0; i < values.length; i += 1) {
+        console.log(values[i]);
+      } */
+      setPartOfArticles(values);
+      setLoading(false);
+    });
+  }
 
   useEffect(() => {
     fetchArticle();
-  }, []);
+  }, [loading]);
 
   if (loading) {
     return (
@@ -109,16 +125,23 @@ const Article = ({ route, navigation }) => {
   }
   return (
     // <View style={{ flex: 1, padding: '5%' }}>
-    <ScrollView style={{ padding: '5%' }}>
+    <ScrollView style={{ flex: 1 }}>
       <OpenedEntireArticle>
-        {Object.entries(partOfArticles).forEach((key, value) => {
-          if (key === 'subtitle') {
-            <OpenedArticleTitle>{value}</OpenedArticleTitle>;
-          } else if (key === 'content') {
-            <OpenedArticleContent>{value}</OpenedArticleContent>;
-          } else if (key === 'image') {
-            <OpenedArticleImage source={{ uri: value.image }} />;
+        {Object.entries(partOfArticles).map(([keyName]) => {
+          const object = partOfArticles[keyName];
+          const key = Object.keys(object)[0];
+          const value = Object.values(object)[0];
+          if (key.includes('subtitle')) {
+            return <OpenedArticleTitle key={key}>{value}</OpenedArticleTitle>;
           }
+          if (key.includes('content')) {
+            return <OpenedArticleContent key={key}>{value}</OpenedArticleContent>;
+          }
+          if (key.includes('image')) {
+            // console.log('image', value);
+            return <OpenedArticleImage key={key} source={{ uri: value }} />;
+          }
+          return null;
         })}
         <OpenedArticleButton onPress={() => navigation.goBack()}>
           <OpenedArticleButtonText>{'Back <<'}</OpenedArticleButtonText>
