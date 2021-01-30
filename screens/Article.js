@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import { Image, Dimensions, ScrollView } from 'react-native';
+import { Image, ScrollView } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { Html5Entities } from 'html-entities';
 import {
   OpenedEntireArticle,
@@ -11,8 +12,7 @@ import {
   OpenedArticleButtonText,
   LoadingView,
 } from '../utils/components';
-
-const screenWidth = Dimensions.get('window').width;
+import * as parameters from '../utils/parameters';
 
 async function extractPartsOfArticle(article) {
   const entities = new Html5Entities();
@@ -24,6 +24,10 @@ async function extractPartsOfArticle(article) {
   const contentPatternEnd = '</p>';
   const imagePatternStart = 'data-src="';
   const imagePatternEnd = '"';
+  const videoPatternStart = '<p><div class="video';
+  const videoPatternEnd = '</div></p>';
+  const twitterPatternStart = '<blockquote class="twitter-tweet">';
+  const twitterPatternEnd = '</blockquote>';
 
   /* const date = article.slice(
     article.indexOf(datePattern) + datePattern.length,
@@ -32,6 +36,7 @@ async function extractPartsOfArticle(article) {
   let subtitle;
   let content;
   let image;
+  let video;
   const result = [];
   for (let i = 0; i < article.length; i += 1) {
     let row = article[i];
@@ -50,37 +55,66 @@ async function extractPartsOfArticle(article) {
       obj['subtitle'.concat(i)] = entities.decode(subtitle);
       result.push(obj);
       i -= 1;
-    } else if (row.includes(imagePatternStart)) {
-      let wholeImageText = '';
+    } else if (row.includes(twitterPatternStart)) {
+      let wholeTwitterText = '';
       do {
         row = article[i];
-        wholeImageText = wholeImageText.concat(row);
+        wholeTwitterText = wholeTwitterText.concat(row);
         i += 1;
-      } while (!row.includes(imagePatternEnd));
-      const firstPartOfImage = wholeImageText.slice(
-        wholeImageText.indexOf(imagePatternStart) + imagePatternStart.length,
-        wholeImageText.length,
+      } while (!row.includes(twitterPatternEnd));
+      const twitter = wholeTwitterText.slice(
+        wholeTwitterText.indexOf(twitterPatternStart),
+        wholeTwitterText.indexOf(twitterPatternEnd) + twitterPatternEnd.length,
       );
-      image = firstPartOfImage.slice(0, firstPartOfImage.indexOf(imagePatternEnd));
       const obj = {};
-      obj['image'.concat(i)] = image;
+      obj['twitter'.concat(i)] = twitter;
       result.push(obj);
-      i -= 1;
     } else if (row.includes(contentPatternStart)) {
-      let wholeContentText = '';
-      do {
-        row = article[i];
-        wholeContentText = wholeContentText.concat(row);
-        i += 1;
-      } while (!row.includes(contentPatternEnd));
-      content = wholeContentText.slice(
-        wholeContentText.indexOf(contentPatternStart) + contentPatternStart.length,
-        wholeContentText.indexOf(contentPatternEnd),
-      );
-      const obj = {};
-      obj['content'.concat(i)] = entities.decode(content);
-      result.push(obj);
-      i -= 1;
+      if (row.includes(imagePatternStart)) {
+        let wholeImageText = '';
+        do {
+          row = article[i];
+          wholeImageText = wholeImageText.concat(row);
+          i += 1;
+        } while (!row.includes(imagePatternEnd));
+        const firstPartOfImage = wholeImageText.slice(
+          wholeImageText.indexOf(imagePatternStart) + imagePatternStart.length,
+          wholeImageText.length,
+        );
+        image = firstPartOfImage.slice(0, firstPartOfImage.indexOf(imagePatternEnd));
+        const obj = {};
+        obj['image'.concat(i)] = image;
+        result.push(obj);
+        i -= 1;
+      } else if (row.includes(videoPatternStart)) {
+        let wholeVideoText = '';
+        do {
+          row = article[i];
+          wholeVideoText = wholeVideoText.concat(row);
+          i += 1;
+        } while (!row.includes(videoPatternEnd));
+        video = wholeVideoText.slice(0, wholeVideoText.length);
+        const obj = {};
+        obj['video'.concat(i)] = video;
+        console.log('video', video);
+        result.push(obj);
+        i -= 1;
+      } else {
+        let wholeContentText = '';
+        do {
+          row = article[i];
+          wholeContentText = wholeContentText.concat(row);
+          i += 1;
+        } while (!row.includes(contentPatternEnd));
+        content = wholeContentText.slice(
+          wholeContentText.indexOf(contentPatternStart) + contentPatternStart.length,
+          wholeContentText.indexOf(contentPatternEnd),
+        );
+        const obj = {};
+        obj['content'.concat(i)] = entities.decode(content);
+        result.push(obj);
+        i -= 1;
+      }
     }
   }
   return result;
@@ -117,7 +151,7 @@ const Article = ({ route, navigation }) => {
     return (
       <LoadingView>
         <Image
-          style={{ width: screenWidth / 3, height: screenWidth / 3 }}
+          style={{ width: parameters.screenWidth / 3, height: parameters.screenHeight / 3 }}
           source={{ uri: 'https://i.gifer.com/YCZH.gif' }}
         />
       </LoadingView>
@@ -138,8 +172,42 @@ const Article = ({ route, navigation }) => {
             return <OpenedArticleContent key={key}>{value}</OpenedArticleContent>;
           }
           if (key.includes('image')) {
-            // console.log('image', value);
             return <OpenedArticleImage key={key} source={{ uri: value }} />;
+          }
+          if (key.includes('video')) {
+            console.log(parameters.screenWidth);
+            const src = value.replace('500', '100%').replace('281', '100%');
+            return (
+              <WebView
+                style={{
+                  alignSelf: 'center',
+                  width: parameters.screenWidth * 0.97,
+                  height: parameters.screenHeight * 0.4,
+                  marginTop: parameters.screenHeight * 0.02,
+                }}
+                key={key}
+                source={{ html: src }}
+                javaScriptEnabled
+              />
+            );
+          }
+          if (key.includes('twitter')) {
+            console.log('twitter', value);
+            const JS =
+              '<script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>';
+            const source = JS + value;
+
+            return (
+              <WebView
+                style={{
+                  backgroundColor: 'transparent',
+                  height: parameters.screenHeight * 0.4,
+                }}
+                key={key}
+                source={{ html: source }}
+                javaScriptEnabled
+              />
+            );
           }
           return null;
         })}

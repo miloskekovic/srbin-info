@@ -93,17 +93,17 @@ export const EntireArticle = styled.View.attrs((props) => ({
 `;
 
 export const OpenedArticleTitle = styled.Text`
-    width: 95%;
+  width: ${parameters.screenWidth * 0.95}px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 3%;
+    margin-top: ${parameters.screenHeight * 0.02}px;
     font-size: ${fontSize * 1.5}px;
     color: ${parameters.color3}
     text-align: justify;
 `;
 
 export const OpenedArticlePublishedAt = styled.Text`
-  width: 95%;
+  width: ${parameters.screenWidth * 0.95}px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 3%;
@@ -135,7 +135,6 @@ export const OpenedArticleButton = styled.TouchableOpacity`
 
 export const OpenedArticleButtonText = styled.Text`
   color: black;
-  font-weight: bold;
   font-size: ${fontSize * 1.5}px;
   align-self: center
   margin-top: auto;
